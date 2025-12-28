@@ -1,33 +1,40 @@
 import os
 import sys
+import paddle
 
-# Ensure the system knows where our custom utils are
-sys.path.append('./')
+# Add local folders to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
-# Disable GPU and OneDNN to prevent the crash we faced earlier
+# CPU Settings
 os.environ['FLAGS_use_onednn'] = '0'
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+paddle.set_device('cpu')
 
-from paddleocr.tools.train import main
-from paddleocr.utils.utility import parse_args
+from tools.program import ArgsParser, load_config
+from ppocr.utils.logging import get_logger
+from tools.train import main
 
 if __name__ == '__main__':
-    # This script acts as a wrapper for the official PaddleOCR training engine
-    # It takes the config file (-c) and runs the fine-tuning logic
+    parser = ArgsParser()
+    args = parser.parse_args(['-c', 'custom_finetune.yml'])
+    config = load_config(args.config)
     
-    # Check if config exists
-    config_path = 'custom_finetune.yml'
-    if not os.path.exists(config_path):
-        print(f"Error: {config_path} not found! Create it first.")
-        sys.exit(1)
+    # --- NEW FIX: Double Injection ---
+    # 1. Put it in Global (where it usually belongs)
+    if 'Global' not in config: config['Global'] = {}
+    config['Global']['profiler_options'] = None
+    
+    # 2. Put it in Root (where the error says it's looking!)
+    config['profiler_options'] = None
+    # ---------------------------------
 
-    print("--- Initializing PaddleOCR Fine-Tuning ---")
-    print(f"Using Config: {config_path}")
+    # Setup basics
+    device = paddle.get_device()
+    logger = get_logger()
+    vdl_writer = None
+    seed = config['Global'].get('seed', 42)
+
+    print(f"--- PaddleOCR Training Started on {device.upper()} ---")
     
-    # We simulate the command line arguments
-    sys.argv = ['train.py', '-c', config_path]
-    
-    try:
-        main()
-    except Exception as e:
-        print(f"\nTraining interrupted or failed: {e}")
+    # Run the main training loop
+    main(config, device, logger, vdl_writer, seed)

@@ -3,8 +3,8 @@ venv_ocr/
 __pycache__/
 *.pyc
 
-# # Local Models (Too large for Git)
-# models/
+# Local Models (Too large for Git)
+models/
 
 # OS specific
 .DS_Store
@@ -12,3 +12,6 @@ Thumbs.db
 
 # Large data folders
 train_data/
+
+tools/
+ppocr/

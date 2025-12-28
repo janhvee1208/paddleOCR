@@ -1,0 +1,1 @@
+./train_data/rec/train/i14.png		0.0
