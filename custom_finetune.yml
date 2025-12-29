@@ -8,7 +8,8 @@ Global:
   save_epoch_step: 10
   eval_batch_step: 100
   cal_metric_during_train: true
-  pretrained_model:
+  # ✅ Keep pointing to your V4 model
+  pretrained_model: ./models/rec_v4/best_accuracy
   checkpoints:
   save_inference_dir:
   use_visualdl: false
@@ -28,22 +29,28 @@ Optimizer:
     name: L2
     factor: 0.00001
 
+# ✅ HYBRID ARCHITECTURE (V4 Backbone + Simple Head)
 Architecture:
   model_type: rec
-  algorithm: CRNN
+  algorithm: SVTR_LCNet
   Transform:
   Backbone:
-    name: MobileNetV3
-    scale: 0.5
-    model_name: small
+    name: PPLCNetV3
+    scale: 0.95
+  # We move the SVTR encoder here to make it a standard "Neck"
   Neck:
     name: SequenceEncoder
-    encoder_type: rnn
-    hidden_size: 96
+    encoder_type: svtr
+    dims: 64
+    depth: 2
+    hidden_dims: 120
+    use_guide: True
+  # We use a single CTCHead (No MultiHead = No List Error)
   Head:
     name: CTCHead
     fc_decay: 0.00001
 
+# ✅ SINGLE LOSS (Fixes Index Error)
 Loss:
   name: CTCLoss
 
@@ -53,16 +60,12 @@ PostProcess:
 Metric:
   name: RecMetric
   main_indicator: acc
+  ignore_space: False
 
-# ============================================================
-#  ✅ UPDATED TRAIN SECTION TO MATCH YOUR FOLDER STRUCTURE
-# ============================================================
 Train:
   dataset:
     name: SimpleDataSet
-    # Point directly to the folder containing images
     data_dir: ./train_data/rec/
-    # Point to your text file
     label_file_list:
       - ./train_data/rec/rec_gt_train.txt
     delimiter: "\t"
@@ -76,22 +79,17 @@ Train:
           character_dict_path: ppocr/utils/dict/en_dict.txt
           use_space_char: false
       - KeepKeys:
-          keep_keys: ['image', 'label','length']
+          keep_keys: ['image', 'label', 'length']
   loader:
     shuffle: true
-    batch_size_per_card: 8
+    batch_size_per_card: 2
     drop_last: true
     num_workers: 0
 
-# ============================================================
-#  ✅ UPDATED EVAL SECTION (Required for training to run)
-# ============================================================
 Eval:
   dataset:
     name: SimpleDataSet
-    # Point to your val folder (I saw it in your screenshot)
     data_dir: ./train_data/rec/
-    # Point to your val text file
     label_file_list:
       - ./train_data/rec/rec_gt_val.txt
     delimiter: "\t"
@@ -105,9 +103,9 @@ Eval:
           character_dict_path: ppocr/utils/dict/en_dict.txt
           use_space_char: false
       - KeepKeys:
-          keep_keys: ['image', 'label' , 'length']
+          keep_keys: ['image', 'label', 'length']
   loader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 8
+    batch_size_per_card: 2
     num_workers: 0

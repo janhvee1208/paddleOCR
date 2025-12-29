@@ -24,7 +24,7 @@ ocr = PaddleOCR(
 )
 
 # 4. Path to your test image (Change 'i18.jpg' to your actual file name)
-img_path = './train_data/images/1.png' 
+img_path = './train_data/images/373.png' 
 
 if os.path.exists(img_path):
     print(f"\n--- Testing Image: {os.path.basename(img_path)} ---")

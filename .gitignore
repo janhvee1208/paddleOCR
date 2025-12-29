@@ -1,10 +1,15 @@
 # Python environment
-venv_ocr/
 __pycache__/
 *.pyc
-
+venv_ocr/
+venv/
+env/
+.env
 # Local Models (Too large for Git)
 models/
+
+#training output
+output/ 
 
 # OS specific
 .DS_Store
@@ -15,3 +20,27 @@ train_data/
 
 tools/
 ppocr/
+
+
+# Flask Backend Runtime
+# -----------------------------
+# The temp image created during upload
+temp_upload.png
+instance/
+.flaskenv
+
+# React Frontend
+# -----------------------------
+ocr-frontend/node_modules/
+ocr-frontend/build/
+ocr-frontend/.env
+ocr-frontend/npm-debug.log*
+ocr-frontend/yarn-debug.log*
+ocr-frontend/yarn-error.log*
+
+# -----------------------------
+# IDE & System
+# -----------------------------
+.vscode/
+.idea/
+.DS_Store
