@@ -44,3 +44,5 @@ ocr-frontend/yarn-error.log*
 .vscode/
 .idea/
 .DS_Store
+
+medical_ocr_env/

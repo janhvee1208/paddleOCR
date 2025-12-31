@@ -1,0 +1,2 @@
+// load the trained model and predict
+python tools/infer_rec.py -c custom_finetune.yml -o Global.pretrained_model=./output/rec/best_accuracy Global.infer_img=./train_data/rec/train/i14.png

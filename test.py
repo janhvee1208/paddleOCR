@@ -18,13 +18,11 @@ ocr = PaddleOCR(
     det_model_dir='./models/det_v3/',
     rec_model_dir='./models/rec_v4/',
     cls_model_dir='./models/cls_v2/',
-    use_gpu=False,
-    enable_mkldnn=False,  # This keeps it stable on your CPU
-    show_log=False
+    enable_mkldnn=False
 )
 
 # 4. Path to your test image (Change 'i18.jpg' to your actual file name)
-img_path = './train_data/images/373.png' 
+img_path = './train_data/images/sample.jpg' 
 
 if os.path.exists(img_path):
     print(f"\n--- Testing Image: {os.path.basename(img_path)} ---")

@@ -1,1 +1,1 @@
-./train_data/rec/train/373.png	aeciecaecitoinalt	0.6280009746551514
+./train_data/rec/train/i14.png	Axodin	0.7877312302589417
