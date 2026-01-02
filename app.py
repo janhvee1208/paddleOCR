@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from paddleocr import PaddleOCR
 
@@ -8,7 +8,8 @@ from features.output_formatter import format_core_output
 from features.medicine_correction import detect_and_correct_medicine
 from features.prescription_nlp import extract_prescription_details
 from features.medical_classification import classify_medical_item
-from features.summary_generator import generate_patient_summary # <--- NEW IMPORT
+from features.summary_generator import generate_patient_summary
+from features.download_manager import generate_downloadable_report 
 
 app = Flask(__name__)
 CORS(app)
@@ -40,7 +41,7 @@ def predict():
         for item in detected_text:
             text_content = item['text']
             
-            # A. Check for Medicine Name
+            # A. Check for Medicine
             detected_med = detect_and_correct_medicine(text_content)
             
             if detected_med:
@@ -49,26 +50,19 @@ def predict():
                 item['original_text'] = item['text']
                 item['text'] = detected_med 
                 
-                # B. Extract Details
+                # B. Details
                 details = extract_prescription_details(text_content)
                 item.update(details)
                 
-                # C. Classify Type
-                item_type = classify_medical_item(text_content)
-                item['type'] = item_type
+                # C. Type
+                item['type'] = classify_medical_item(text_content)
                 
-                # ---------------------------------------------------
-                # ✅ PHASE 5 UPDATE: Generate Human Summary
-                # ---------------------------------------------------
+                # D. Summary
                 item['summary'] = generate_patient_summary(item)
-                # ---------------------------------------------------
                 
             else:
                 item['is_medicine'] = False
                 item['medicine_name'] = None
-                item['dosage'] = None
-                item['frequency'] = None
-                item['duration'] = None
                 item['type'] = "Text"
                 item['summary'] = None
 
@@ -81,6 +75,27 @@ def predict():
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
+
+# -----------------------------------------------------------
+# ✅ THIS WAS MISSING: The Download Endpoint
+# -----------------------------------------------------------
+@app.route('/download_report', methods=['POST'])
+def download_report():
+    try:
+        # Frontend sends the JSON data back to us to format
+        data = request.json.get('data', [])
+        
+        # Generate the text report
+        report_content = generate_downloadable_report(data)
+        
+        # Return as a downloadable text file
+        return Response(
+            report_content,
+            mimetype="text/plain",
+            headers={"Content-disposition": "attachment; filename=prescription_report.txt"}
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './App.css'; // You can keep this for custom tweaks if needed
+import './App.css'; 
 
 function App() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -37,6 +37,40 @@ function App() {
       alert("Failed to connect to backend server.");
     }
     setLoading(false);
+  };
+
+  // ✅ NEW: Function to handle downloading the report
+  const handleDownloadReport = async () => {
+    if (!results || results.length === 0) {
+      alert("No data to download!");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/download_report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: results }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'Prescription_Report.txt'); 
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        alert("Failed to generate report.");
+      }
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      alert("Error downloading file.");
+    }
   };
 
   return (
@@ -126,12 +160,33 @@ function App() {
                               {(item.confidence * 100).toFixed(1)}%
                             </small>
                           </div>
+                          
+                          {/* Display the Human Readable Summary if available */}
+                          {item.summary && (
+                            <p className="mb-1 text-dark small">
+                              <strong>Summary:</strong> {item.summary}
+                            </p>
+                          )}
+                          
                           <p className="mb-0 small text-muted">Confidence Score</p>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
+
+                {/* ✅ NEW: Footer with Download Button */}
+                {results.length > 0 && (
+                  <div className="card-footer bg-white p-3 text-center">
+                    <button 
+                      className="btn btn-success w-100 fw-bold" 
+                      onClick={handleDownloadReport}
+                    >
+                      📥 Download Report
+                    </button>
+                  </div>
+                )}
+                
               </div>
             </div>
           </div>
@@ -141,4 +196,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
