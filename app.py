@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize OCR
-ocr = PaddleOCR(rec_model_dir='./models/rec_v4',
+ocr = PaddleOCR(rec_model_dir='./models/en_PP-OCRv4_rec_infer',
                 lang='en',
                 use_angle_cls=False,
                 use_gpu=False,
