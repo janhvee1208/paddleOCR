@@ -155,76 +155,73 @@ def predict():
     file.save(temp_path)
 
     try:
-        # 1️⃣ PRIMARY OCR
+        # 1️⃣ RUN LOCAL OCR & PRINT TO TERMINAL
+        print("\n" + "="*50)
+        print("📝 LOCAL OCR OUTPUT (PADDLEOCR)")
+        print("="*50)
+        
         result = ocr.ocr(temp_path, cls=False)
         detected_text = format_core_output(result)
+        
+        # Pretty-print the local OCR result to your terminal
+        print(json.dumps(detected_text, indent=4))
+        print("="*50 + "\n")
 
-        # 2️⃣ OCR CONFIDENCE
-        ocr_confidence = calculate_ocr_confidence(detected_text)
-        print(f"📊 OCR Confidence: {ocr_confidence}")
+        # 2️⃣ RUN AI ANALYSIS FOR FRONTEND
+        print("🚀 Requesting AI Analysis from Gemini...")
+        
+        # Note: Ensure gemini_fallback_analysis uses "gemini-1.5-flash"
+        ai_analysis = gemini_fallback_analysis(temp_path)
 
-        # 3️⃣ AI FALLBACK
-        if ocr_confidence < OCR_CONFIDENCE_THRESHOLD:
-            print("⚠️ Using Gemini AI fallback")
-            ai_analysis = gemini_fallback_analysis(temp_path)
-
-            # ✅ NORMALIZE AI OUTPUT FOR FRONTEND
-            normalized_results = []
-            for med in ai_analysis.get("medications", []):
-                normalized_results.append({
-                    "text": med.get("name", ""),
-                    "summary": (
-                        f"Dosage: {med.get('dosage', '')}, "
-                        f"Frequency: {med.get('frequency', '')}, "
-                        f"Duration: {med.get('duration', '')}, "
-                        f"Purpose: {med.get('purpose', '')}"
-                    )
-                })
-
-            return jsonify({
-                "success": True,
-                "source": "AI_FALLBACK",
-                "ocr_confidence": ocr_confidence,
-                "data": normalized_results
+        # ✅ NORMALIZE AI OUTPUT FOR FRONTEND
+        # This keeps your frontend keys consistent (medicine_name, summary, etc.)
+        normalized_results = []
+        for med in ai_analysis.get("medications", []):
+            normalized_results.append({
+                "text": med.get("name", ""),
+                "medicine_name": med.get("name", ""),
+                "is_medicine": True,
+                "dosage": med.get("dosage", ""),
+                "frequency": med.get("frequency", ""),
+                "duration": med.get("duration", ""),
+                "type": "Medicine",
+                "summary": (
+                    f"Dosage: {med.get('dosage', '')}, "
+                    f"Frequency: {med.get('frequency', '')}, "
+                    f"Duration: {med.get('duration', '')}, "
+                    f"Purpose: {med.get('purpose', '')}"
+                )
             })
 
-        # 4️⃣ EXISTING FEATURE PIPELINE
-        for item in detected_text:
-            text_content = item["text"]
+        # Add notes if available
+        if ai_analysis.get("notes"):
+            normalized_results.append({
+                "text": "General Notes",
+                "is_medicine": False,
+                "type": "Notes",
+                "summary": ai_analysis.get("notes")
+            })
 
-            detected_med = detect_and_correct_medicine(text_content)
-
-            if detected_med:
-                item["is_medicine"] = True
-                item["medicine_name"] = detected_med
-                item["original_text"] = text_content
-                item["text"] = detected_med
-
-                details = extract_prescription_details(text_content)
-                item.update(details)
-
-                item["type"] = classify_medical_item(text_content)
-                item["summary"] = generate_patient_summary(item)
-            else:
-                item["is_medicine"] = False
-                item["medicine_name"] = None
-                item["type"] = "Text"
-                item["summary"] = None
-
+        # 3️⃣ RETURN ONLY AI DATA TO FRONTEND
         return jsonify({
             "success": True,
-            "source": "LOCAL_OCR",
-            "ocr_confidence": ocr_confidence,
-            "data": detected_text
+            "source": "GEMINI_AI",
+            "data": normalized_results,
+            "metadata": {
+                "doctor": ai_analysis.get("doctorName"),
+                "patient": ai_analysis.get("patientName"),
+                "date": ai_analysis.get("date")
+            }
         })
 
     except Exception as e:
+        print(f"❌ ERROR: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
-
+            
 # -----------------------------------------------------------
 # ✅ DOWNLOAD REPORT ENDPOINT
 # -----------------------------------------------------------
