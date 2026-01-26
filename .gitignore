@@ -46,3 +46,4 @@ ocr-frontend/yarn-error.log*
 .DS_Store
 
 medical_ocr_env/
+.env/

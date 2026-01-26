@@ -6,23 +6,14 @@ from flask_cors import CORS
 from paddleocr import PaddleOCR
 from dotenv import load_dotenv
 load_dotenv()
-
 import google.generativeai as genai
-
-# -----------------------------------------------------------
-# ✅ GEMINI CONFIGURATION
-# -----------------------------------------------------------
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-# -----------------------------------------------------------
-# ✅ EXISTING FEATURES (UNCHANGED)
-# -----------------------------------------------------------
 from features.output_formatter import format_core_output
 from features.medicine_correction import detect_and_correct_medicine
 from features.prescription_nlp import extract_prescription_details
 from features.medical_classification import classify_medical_item
 from features.summary_generator import generate_patient_summary
 from features.download_manager import generate_downloadable_report
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = Flask(__name__)
 CORS(app)
@@ -251,8 +242,6 @@ def download_report():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# -----------------------------------------------------------
-# ✅ APP ENTRY POINT
-# -----------------------------------------------------------
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
