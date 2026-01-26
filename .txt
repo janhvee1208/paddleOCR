@@ -2,3 +2,5 @@
 python tools/infer_rec.py -c custom_finetune.yml -o Global.pretrained_model=./output/rec/best_accuracy Global.infer_img=./train_data/rec/train/i14.png
 
 python train.py -c custom_finetune.yml
+
+medical_ocr_env/Scripts/activate

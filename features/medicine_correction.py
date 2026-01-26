@@ -112,7 +112,7 @@ def detect_and_correct_medicine(text_line):
         db_lower = [m.lower() for m in MEDICINE_DB]
         
         # 3. Get matches with LOWER strictness (0.5)
-        matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.75)
+        matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.5)
         
         if matches:
             match_lower = matches[0]
