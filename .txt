@@ -3,4 +3,4 @@ python tools/infer_rec.py -c custom_finetune.yml -o Global.pretrained_model=./ou
 
 python train.py -c custom_finetune.yml
 
-medical_ocr_env/Scripts/activate
+cd ocr-frontend

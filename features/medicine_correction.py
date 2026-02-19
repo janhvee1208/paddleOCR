@@ -1,4 +1,5 @@
 import difflib
+from features.medicine_db import fetch_all_medicine_names
 
 # 1. Database of Medicines
 MEDICINE_DB = [
@@ -89,37 +90,91 @@ MEDICINE_DB = [
 
 ]
 
+# Add this list to prevent common prescription words from matching medicines
+# 1. Define words that are common in prescriptions but are NOT medicines
+# Add this list to prevent common prescription words from matching medicines
+BLACKLIST = ["tab", "tablet", "capsule", "refill", "daily", "patient", "dose", "morning", "night"]
+
 def detect_and_correct_medicine(text_line):
-    """
-    Scans a line of text to see if any word looks like a known medicine.
-    Returns: The corrected medicine name (if found), or None.
-    """
     if not text_line:
         return None
 
-    # Clean the text (remove punctuation roughly)
+    # Clean the text but keep spaces
     clean_text = ''.join(e for e in text_line if e.isalnum() or e.isspace())
     words = clean_text.split()
     
     for word in words:
-        if len(word) < 3:
+        word_lower = word.lower()
+
+        # 🛑 LAYER 1: Ignore very short words and common non-medicine terms
+        if len(word_lower) < 4 or word_lower in BLACKLIST:
             continue
             
-        # 1. Convert word to lowercase for better matching
-        word_lower = word.lower()
-        
-        # 2. Create a lowercase list of our DB for comparison
+        # 🛑 LAYER 2: Ensure the word contains mostly letters 
+        # (Prevents strings like '100mg' from matching 'Morphine')
+        if not any(char.isalpha() for char in word_lower):
+            continue
+
         db_lower = [m.lower() for m in MEDICINE_DB]
         
-        # 3. Get matches with LOWER strictness (0.5)
-        matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.5)
+        # 🛑 LAYER 3: Increase strictness (Cutoff 0.7 instead of 0.5)
+        # This requires a 70% character match to be accepted
+        matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.55)
         
         if matches:
             match_lower = matches[0]
-            # Find the original "Capitalized" name
             original_name = MEDICINE_DB[db_lower.index(match_lower)]
             
+            # 🛑 LAYER 4: Length Difference Check
+            # Prevents 'John' matching 'Morphine' (Difference is too big)
+            if abs(len(word_lower) - len(match_lower)) > 3:
+                continue
+
             print(f"💊 Medicine Detected: '{word}' -> Corrected to '{original_name}'")
             return original_name
 
     return None
+
+# BLACKLIST = ["tab", "tablet", "capsule", "refill", "daily", "patient", "dose", "morning", "night", "pain"]
+
+# def detect_and_correct_medicine(text_line):
+#     if not text_line:
+#         return None
+
+#     # Dynamically fetch the list of 321 medicines from PostgreSQL
+#     medicine_list = fetch_all_medicine_names()
+#     if not medicine_list:
+#         return None
+
+#     # Clean text to keep only alphanumeric characters and spaces
+#     clean_text = ''.join(e for e in text_line if e.isalnum() or e.isspace())
+#     words = clean_text.split()
+    
+#     for word in words:
+#         word_lower = word.lower()
+
+#         # Skip blacklisted terms or very short words
+#         if len(word_lower) < 4 or word_lower in BLACKLIST:
+#             continue
+            
+#         # Ensure the word contains alphabetic characters
+#         if not any(char.isalpha() for char in word_lower):
+#             continue
+
+#         db_lower = [m.lower() for m in medicine_list]
+        
+#         # Use fuzzy matching with a 0.75 strictness threshold
+#         matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.60)
+        
+#         if matches:
+#             match_lower = matches[0]
+#             original_name = medicine_list[db_lower.index(match_lower)]
+            
+#             # Final validation: prevent short words from matching much longer drug names
+#             if abs(len(word_lower) - len(match_lower)) > 3:
+#                 continue
+
+#             print(f"💊 Match Found: '{word}' -> '{original_name}'")
+#             return original_name
+
+#     return None
