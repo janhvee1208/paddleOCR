@@ -2,7 +2,7 @@
    MediScan Pro — Landing Page
    =========================== */
 
-/* @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
 
 /* ── CSS Variables ── */
 :root {
@@ -34,7 +34,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Nunito', sans-serif;
   background: var(--off-white);
   color: var(--text-primary);
   line-height: 1.6;
@@ -50,7 +50,7 @@ body {
 .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 .section-tag {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  font-family: 'Urbanist', sans-serif; font-size: 11px; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--purple); background: rgba(108, 92, 231, 0.1);
   border: 1px solid rgba(108, 92, 231, 0.2);
@@ -117,8 +117,8 @@ body {
 }
 .nav-logo {
   display: flex; align-items: center; gap: 10px;
-  text-decoration: none; font-family: 'Syne', sans-serif;
-  font-weight: 800; font-size: 20px; color: var(--text-primary);
+  text-decoration: none; font-family: 'Urbanist', sans-serif;
+  font-weight: 700; font-size: 20px; color: var(--text-primary);
 }
 .nav-logo-icon {
   width: 36px; height: 36px; border-radius: 10px;
@@ -197,8 +197,8 @@ body {
   box-shadow: 0 0 8px var(--teal); animation: pulse-ring 2s infinite;
 }
 .hero-heading {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(36px, 4.5vw, 58px); font-weight: 800;
+  font-family: 'Urbanist', sans-serif;
+  font-size: clamp(34px, 4vw, 54px); font-weight: 600; letter-spacing: -0.03em;
   line-height: 1.1; margin-bottom: 24px; color: var(--text-primary);
 }
 .hero-heading .highlight {
@@ -216,7 +216,7 @@ body {
   display: inline-flex; align-items: center; gap: 10px;
   background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
   color: #fff; padding: 15px 32px; border-radius: 99px;
-  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600;
   border: none; cursor: pointer; text-decoration: none;
   box-shadow: 0 8px 28px rgba(108, 92, 231, 0.4);
   animation: pulse-ring 2.5s infinite;
@@ -265,7 +265,7 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .split-card-title {
-  font-family: 'Syne', sans-serif; font-size: 13px;
+  font-family: 'Urbanist', sans-serif; font-size: 13px;
   font-weight: 700; color: var(--text-primary);
 }
 .card-dots { display: flex; gap: 6px; }
@@ -373,8 +373,8 @@ body {
 }
 .section-header { text-align: center; margin-bottom: 64px; }
 .section-heading {
-  font-family: 'Syne', sans-serif; font-size: clamp(28px, 3.5vw, 44px);
-  font-weight: 800; line-height: 1.15; margin-bottom: 16px;
+  font-family: 'Urbanist', sans-serif; font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 700; line-height: 1.15; margin-bottom: 16px;
   color: var(--text-primary);
 }
 .section-sub {
@@ -408,7 +408,7 @@ body {
   box-shadow: var(--shadow-lg);
 }
 .step-number {
-  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800;
+  font-family: 'Urbanist', sans-serif; font-size: 11px; font-weight: 700;
   letter-spacing: 0.12em; color: var(--purple); margin-bottom: 16px;
 }
 .step-icon-wrap {
@@ -420,7 +420,7 @@ body {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
 }
 .step-card h3 {
-  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+  font-family: 'Urbanist', sans-serif; font-size: 18px; font-weight: 700;
   margin-bottom: 12px; color: var(--text-primary);
 }
 .step-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
@@ -471,7 +471,7 @@ body {
   box-shadow: var(--shadow-sm);
 }
 .benefit-card h3 {
-  font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 700;
+  font-family: 'Urbanist', sans-serif; font-size: 19px; font-weight: 700;
   margin-bottom: 8px; color: var(--text-primary);
 }
 .benefit-label {
@@ -508,7 +508,7 @@ body {
   font-size: 26px; box-shadow: 0 8px 24px var(--purple-glow);
 }
 .safety-card h3 {
-  font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700;
+  font-family: 'Urbanist', sans-serif; font-size: 17px; font-weight: 700;
   margin-bottom: 8px; color: var(--text-primary);
 }
 .safety-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
@@ -535,7 +535,7 @@ body {
 }
 .stat-item:last-child { border-right: none; }
 .stat-number {
-  font-family: 'Syne', sans-serif; font-size: 44px; font-weight: 800;
+  font-family: 'Urbanist', sans-serif; font-size: 44px; font-weight: 700;
   color: #fff; line-height: 1; margin-bottom: 8px;
   background: linear-gradient(135deg, #fff, var(--purple-light));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -566,8 +566,8 @@ body {
   bottom: -100px; left: -50px;
 }
 .cta-box h2 {
-  font-family: 'Syne', sans-serif; font-size: clamp(28px, 4vw, 46px);
-  font-weight: 800; color: #fff; margin-bottom: 16px; position: relative; z-index: 1;
+  font-family: 'Urbanist', sans-serif; font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700; color: #fff; margin-bottom: 16px; position: relative; z-index: 1;
 }
 .cta-box p {
   font-size: 16px; color: rgba(255,255,255,0.75);
@@ -577,7 +577,7 @@ body {
   display: inline-flex; align-items: center; gap: 10px;
   background: #fff; color: var(--purple-dark);
   padding: 16px 36px; border-radius: 99px;
-  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700;
   border: none; cursor: pointer; text-decoration: none;
   box-shadow: 0 8px 30px rgba(0,0,0,0.2);
   transition: transform var(--transition), box-shadow var(--transition);
@@ -600,7 +600,7 @@ body {
 }
 .footer-logo {
   display: flex; align-items: center; gap: 10px;
-  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-family: 'Urbanist', sans-serif; font-weight: 700;
   font-size: 18px; color: #fff; text-decoration: none;
 }
 .footer-logo-icon {
