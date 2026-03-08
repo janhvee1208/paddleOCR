@@ -67,7 +67,7 @@ function HeroVisual() {
             <span /><span /><span />
           </div>
           <div className="split-card-title">MediScan Pro · Active Scan</div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>v2.4.1</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}></div>
         </div>
 
         <div className="split-body">
@@ -213,9 +213,9 @@ function HowItWorks() {
       num: '01',
       icon: '🔍',
       title: 'Intelligent OCR',
-      tech: 'PaddleOCR · en_PP-OCRv4',
+      tech: 'PaddleOCR',
       desc:
-        'Uses locally-run en_PP-OCRv4_rec_infer models to read handwritten prescriptions with high precision. Your data never leaves your device — zero cloud exposure.',
+        'Uses locally-run models to read handwritten prescriptions with high precision. Your data never leaves your device — zero cloud exposure.',
     },
     {
       num: '02',
@@ -229,7 +229,7 @@ function HowItWorks() {
       num: '03',
       icon: '🗃️',
       title: 'Database Cross-Reference',
-      tech: 'PostgreSQL · 300+ Medications',
+      tech: 'PostgreSQL · 3000+ Medications',
       desc:
         'Matched names are cross-referenced against a verified local database of 300+ medications to provide Medical Uses, dosage guidance, and plain-language Patient Summaries.',
     },
@@ -361,10 +361,10 @@ function SafetyBadges() {
 
 function Stats() {
   const stats = [
-    { number: '300+', label: 'Medications in Database' },
-    { number: '94%',  label: 'Average OCR Confidence' },
+    { number: '3000+', label: 'Medications in Database' },
+    { number: '90%',  label: 'Average OCR Confidence' },
     { number: '0',    label: 'External API Calls' },
-    { number: '<2s',  label: 'Average Scan Time' },
+    { number: '<5s',  label: 'Average Scan Time' },
   ];
   return (
     <section className="stats">
