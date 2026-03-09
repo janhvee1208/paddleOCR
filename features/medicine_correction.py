@@ -13,13 +13,7 @@ MEDICINE_DB = [
 "Bacaid", "Backtone", "Baclofen", "Baclon", "Bacmax", "Beclomethasone",
 "Beklo", "Biotin", "Bicozin", "Bisoprolol", "Budesonide", "Bupropion",
 "CalciumCarbonate", "CalciumCitrate", "Candesartan", "Canazole",
-"Candesartan", "Captopril", "Carbamazepine", "Carvedilol",
-"Cefazolin", "Cefepime", "Cefixime", "Cefpodoxime", "Ceftriaxone",
-"Ceftazidime", "Cefuroxime", "Cetirizine", "Cetisoft",
-"Chloramphenicol", "Chloroquine", "Ciclesonide", "Cimetidine",
-"Ciprofloxacin", "Clarithromycin", "Clindamycin", "Clomipramine",
-"Clonazepam", "Clopidogrel", "Cloxacillin", "Codeine",
-"Colistin", "Conaz", "Crosin", "Cyanocobalamin", "Cyclosporine",
+"Cetirizine",
 "Dabigatran", "Dancel", "Denixil", "Desloratadine", "Desvenlafaxine",
 "Dexamethasone", "Diazepam", "Diclofenac", "Diflu", "Diltiazem",
 "Dinafex", "Disopan", "Domperidone", "Doxepin", "Doxycycline",
@@ -119,7 +113,7 @@ def detect_and_correct_medicine(text_line):
         
         # 🛑 LAYER 3: Increase strictness (Cutoff 0.7 instead of 0.5)
         # This requires a 70% character match to be accepted
-        matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.55)
+        matches = difflib.get_close_matches(word_lower, db_lower, n=1, cutoff=0.6)
         
         if matches:
             match_lower = matches[0]

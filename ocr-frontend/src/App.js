@@ -131,17 +131,26 @@ function UploadZone({ selectedImage, onImageChange }) {
    Result Card
 ───────────────────────────── */
 function ResultCard({ item, index }) {
-  const isUnknown = item.description === 'Medical information not available in local database.';
+  // Since we are strictly filtering in handleScan, these will always be verified.
   return (
-    <div className={`result-card-modern ${isUnknown ? 'rc-unknown' : 'rc-verified'}`}>
+    <div className="result-card-modern rc-verified">
       <div className="rc-header">
         <div className="rc-num">#{index + 1}</div>
+        {/* Strictly display the corrected medicine_name */}
         <h4 className="rc-name">{item.medicine_name}</h4>
-        <span className={`rc-badge ${isUnknown ? 'badge-warn' : 'badge-ok'}`}>{isUnknown ? '⚠ Unknown' : '✓ Verified'}</span>
+        <span className="rc-badge badge-ok">
+          ✓ Verified
+        </span>
       </div>
       <div className="rc-body">
-        <div className="rc-field"><span className="rc-label">Medical Uses</span><p className="rc-text">{item.description}</p></div>
-        <div className="rc-field"><span className="rc-label">Patient Summary</span><p className="rc-text">{item.summary}</p></div>
+        <div className="rc-field">
+          <span className="rc-label">Medical Uses</span>
+          <p className="rc-text">{item.description}</p>
+        </div>
+        <div className="rc-field">
+          <span className="rc-label">Patient Summary</span>
+          <p className="rc-text">{item.summary}</p>
+        </div>
       </div>
     </div>
   );
@@ -169,7 +178,6 @@ function UserMenu({ user, onLogout }) {
               <p className="ud-email">{user.email}</p>
             </div>
           </div>
-          {/* DB badge */}
           <div className="ud-db-badge">
             <span>🗄️</span> History stored in PostgreSQL
           </div>
@@ -185,7 +193,7 @@ function UserMenu({ user, onLogout }) {
    Main App
 ───────────────────────────── */
 function App() {
-  const [currentUser,  setCurrentUser]  = useState(null);   // { id, name, email }
+  const [currentUser,  setCurrentUser]  = useState(null);
   const [selectedImage,setSelectedImage]= useState(null);
   const [results,      setResults]      = useState([]);
   const [loading,      setLoading]      = useState(false);
@@ -238,7 +246,19 @@ function App() {
       const data     = await response.json();
 
       if (data.success) {
-        const filtered = data.data.filter((i) => i.is_medicine === true);
+        // ✅ STRICT FILTERING: 
+        // We only keep items that are medicines AND have a valid database description.
+        // This completely eliminates the "Unknown" mistakes from showing on the screen.
+        const filtered = data.data.filter((i) => {
+          return i.is_medicine === true && 
+                 i.description && 
+                 i.description !== 'Medical information not available in local database.';
+        });
+
+        if (filtered.length === 0 && data.data.length > 0) {
+           alert("Scan complete, but no verified medications were recognized from the database.");
+        }
+
         setResults(filtered);
 
         // ── Save to PostgreSQL ──
@@ -250,7 +270,6 @@ function App() {
             filtered
           );
           if (savedId) {
-            // Prepend to local history state so UI updates instantly
             const newItem = {
               id:        savedId,
               imageName: selectedImage.name,
@@ -285,14 +304,18 @@ function App() {
   };
 
   const loadHistoryItem = (item) => {
-    setResults(item.results);
+    // Also ensuring old history loads filter out any unknowns that might have been saved previously
+    const verifiedOnly = (item.results || []).filter(i => 
+      i.is_medicine === true && 
+      i.description !== 'Medical information not available in local database.'
+    );
+    setResults(verifiedOnly);
     setSelectedImage(null);
     setCurrentView('scanner');
   };
 
   const clearHistory = async () => {
     if (!window.confirm('Clear ALL your scan history from the database?')) return;
-    // Delete each record from PostgreSQL
     await Promise.all(history.map((item) => deleteHistoryFromDB(item.id, currentUser.id)));
     setHistory([]);
   };
@@ -318,7 +341,6 @@ function App() {
     <div className="app-layout">
       {showCamera && <CameraModal onCapture={handleImageChange} onClose={() => setShowCamera(false)} />}
 
-      {/* ── Sidebar ── */}
       <aside className={`sidebar-modern ${sidebarOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-brand">
           <div className="brand-icon">💊</div>
@@ -345,14 +367,12 @@ function App() {
           <button className="sidebar-clear-btn" onClick={clearHistory}>🗑 Clear History</button>
         )}
 
-        {/* DB indicator */}
         {sidebarOpen && (
           <div className="sidebar-db-badge">
             <span>🗄️</span> PostgreSQL
           </div>
         )}
 
-        {/* Sidebar user */}
         {currentUser && sidebarOpen && (
           <div className="sidebar-user">
             <div className="su-avatar">{currentUser.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}</div>
@@ -364,7 +384,6 @@ function App() {
         )}
       </aside>
 
-      {/* ── Main ── */}
       <div className="main-modern">
         <header className="topbar">
           <button className="topbar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -380,8 +399,6 @@ function App() {
         </header>
 
         <div className="page-content">
-
-          {/* ══ SCANNER ══ */}
           {currentView === 'scanner' && (
             <div className="scanner-view">
               <div className="upload-card">
@@ -402,8 +419,8 @@ function App() {
                 <div className="results-section">
                   <div className="results-top-bar">
                     <div>
-                      <h2 className="results-heading">Detected Medications</h2>
-                      <p className="results-count">{results.length} medication{results.length !== 1 ? 's' : ''} identified · saved to database</p>
+                      <h2 className="results-heading">Verified Medications</h2>
+                      <p className="results-count">{results.length} medication{results.length !== 1 ? 's' : ''} matched in database</p>
                     </div>
                     <button className="btn-download" onClick={handleDownloadReport}>⬇ Download Report</button>
                   </div>
@@ -429,7 +446,6 @@ function App() {
             </div>
           )}
 
-          {/* ══ HISTORY ══ */}
           {currentView === 'history' && (
             <div className="history-view">
               <div className="history-head">
@@ -475,7 +491,6 @@ function App() {
               )}
             </div>
           )}
-
         </div>
       </div>
     </div>
