@@ -243,9 +243,9 @@ function SignupForm({ onLogin, onSwitch }) {
       )}
 
       <form onSubmit={handleSubmit} className="auth-form" noValidate>
-        <InputField label="Full Name"        type="text"     value={form.name}     onChange={set('name')}     placeholder="Dr. / Patient Name"   icon="👤" error={errors.name}     />
-        <InputField label="Email Address"    type="email"    value={form.email}    onChange={set('email')}    placeholder="you@example.com"      icon="✉️" error={errors.email}    />
-        <InputField label="Password"         type="password" value={form.password} onChange={set('password')} placeholder="Min. 6 characters"    icon="🔑" error={errors.password} />
+        <InputField label="Full Name"        type="text"     value={form.name}     onChange={set('name')}     placeholder="Dr. / Patient Name"    error={errors.name}     />
+        <InputField label="Email Address"    type="email"    value={form.email}    onChange={set('email')}    placeholder="you@example.com"       error={errors.email}    />
+        <InputField label="Password"         type="password" value={form.password} onChange={set('password')} placeholder="Min. 6 characters"     error={errors.password} />
 
         {strength && (
           <div className="pwd-strength">
@@ -307,10 +307,10 @@ export default function AuthPage({ onLogin }) {
           </p>
           <div className="auth-left-features">
             {[
-              { icon: '🔍', text: 'AI-powered OCR scanning'       },
-              { icon: '🗃️', text: '300+ verified medications'      },
-              { icon: '📜', text: 'Per-user history in PostgreSQL' },
-              { icon: '🔒', text: 'Salted & hashed passwords'      },
+              { text: 'AI-powered OCR scanning'       },
+              {  text: '300+ verified medications'      },
+              {  text: 'Per-user history in PostgreSQL' },
+              {  text: 'Salted & hashed passwords'      },
             ].map((f) => (
               <div key={f.text} className="auth-left-feature">
                 <span className="alf-icon">{f.icon}</span>

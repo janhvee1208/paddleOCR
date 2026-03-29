@@ -19,16 +19,11 @@ if __name__ == '__main__':
     args = parser.parse_args(['-c', 'custom_finetune.yml'])
     config = load_config(args.config)
     
-    # --- NEW FIX: Double Injection ---
-    # 1. Put it in Global (where it usually belongs)
     if 'Global' not in config: config['Global'] = {}
     config['Global']['profiler_options'] = None
     
-    # 2. Put it in Root (where the error says it's looking!)
     config['profiler_options'] = None
-    # ---------------------------------
-
-    # Setup basics
+   
     device = paddle.get_device()
     logger = get_logger()
     vdl_writer = None

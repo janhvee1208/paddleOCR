@@ -349,9 +349,9 @@ function App() {
 
         <nav className="sidebar-nav">
           {[
-            { view: 'landing', icon: '🏠', label: 'Home'    },
-            { view: 'scanner', icon: '🔍', label: 'Scanner' },
-            { view: 'history', icon: '📜', label: 'History' },
+            { view: 'landing',  label: 'Home'    },
+            { view: 'scanner',  label: 'Scanner' },
+            { view: 'history', label: 'History' },
           ].map(({ view, icon, label }) => (
             <button key={view} className={`snav-item ${currentView === view ? 'active' : ''}`} onClick={() => setCurrentView(view)}>
               <span className="snav-icon">{icon}</span>
@@ -393,7 +393,7 @@ function App() {
             {currentView === 'scanner' ? '🔍 Prescription Analysis' : '📜 Scan History'}
           </h1>
           <div className="topbar-right-group">
-            <div className="topbar-pill"><span className="topbar-dot" /> PostgreSQL · Live</div>
+            <div className="topbar-pill"><span className="topbar-dot" /> PostgreSQL </div>
             {currentUser && <UserMenu user={currentUser} onLogout={handleLogout} />}
           </div>
         </header>

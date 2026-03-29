@@ -39,29 +39,6 @@ def get_db():
 #  Auto-create tables on startup
 # ─────────────────────────────────────────────
 def init_db():
-    """
-    Creates two tables if they don't already exist:
-
-    users
-    ┌──────────────┬─────────────────────────────────────┐
-    │ id           │ SERIAL PRIMARY KEY                   │
-    │ name         │ TEXT NOT NULL                        │
-    │ email        │ TEXT UNIQUE NOT NULL                 │
-    │ password_hash│ TEXT NOT NULL  (SHA-256 hex)         │
-    │ salt         │ TEXT NOT NULL                        │
-    │ created_at   │ TIMESTAMP DEFAULT NOW()              │
-    └──────────────┴─────────────────────────────────────┘
-
-    scan_history
-    ┌──────────────┬─────────────────────────────────────┐
-    │ id           │ SERIAL PRIMARY KEY                   │
-    │ user_id      │ INTEGER REFERENCES users(id)         │
-    │ image_name   │ TEXT                                 │
-    │ item_count   │ INTEGER                              │
-    │ results      │ JSONB   (full medicine list)         │
-    │ scanned_at   │ TIMESTAMP DEFAULT NOW()              │
-    └──────────────┴─────────────────────────────────────┘
-    """
     conn = get_db()
     cur  = conn.cursor()
 
@@ -304,7 +281,7 @@ def delete_history(history_id):
 #  OCR  —  POST /predict
 # ─────────────────────────────────────────────
 ocr = PaddleOCR(
-    rec_model_dir='./models/en_PP-OCRv4_rec_infer',
+ rec_model_dir='./output/rec/best_model', 
     lang='en',
     use_angle_cls=False,
     use_gpu=False,
@@ -324,8 +301,17 @@ def predict():
         result       = ocr.ocr(temp_path, cls=False)
         detected_text = format_core_output(result)
 
+        # 🟢 ADDED: Visual separator in your terminal
+        print("\n" + "="*50)
+        print("📄 NEW PRESCRIPTION SCAN STARTED")
+        print("="*50)
+
         for item in detected_text:
             text_content  = item["text"]
+            
+            # 🟢 ADDED: Print exactly what OCR sees before any corrections
+            print(f"🔍 RAW OCR TEXT: '{text_content}'")
+            
             corrected_name = detect_and_correct_medicine(text_content)
             details        = extract_prescription_details(text_content)
 
@@ -344,6 +330,7 @@ def predict():
                 item['type']          = "Text"
                 item['summary']       = None
 
+        print("="*50 + "\n")
         return jsonify({"success": True, "data": detected_text})
 
     except Exception as e:
@@ -375,5 +362,5 @@ def download_report():
 #  STARTUP
 # ─────────────────────────────────────────────
 if __name__ == '__main__':
-    init_db()          # ← creates tables if they don't exist
+    init_db()          
     app.run(debug=True, port=5000)

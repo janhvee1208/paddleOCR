@@ -133,7 +133,7 @@ function HeroVisual() {
       {/* Floating bottom-right badge */}
       <div className="hero-badge-float bot-right">
         <span className="badge-icon">🗃️</span>
-        <span>300+ Medications DB</span>
+        <span>3000+ Medications DB</span>
       </div>
     </div>
   );

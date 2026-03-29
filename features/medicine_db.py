@@ -25,7 +25,7 @@ def fetch_all_medicine_names():
         conn.close()
         return names
     except Exception as e:
-        print(f"❌ DB Error: {e}")
+        print(f" DB Error: {e}")
         return []
 
 def get_medicine_uses(medicine_name):
@@ -39,5 +39,5 @@ def get_medicine_uses(medicine_name):
         conn.close()
         return result['uses'] if result else None
     except Exception as e:
-        print(f"❌ DB Error: {e}")
+        print(f" DB Error: {e}")
         return None
